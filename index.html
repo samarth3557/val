@@ -114,19 +114,39 @@
         let phraseIndex = 0;
 
         function moveButton() {
-            // 1. Calculate random positions within the screen
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            // 1. Get current position 
+            // If it hasn't moved yet, we estimate it's near the center
+            const currentX = parseFloat(noBtn.style.left) || window.innerWidth / 2;
+            const currentY = parseFloat(noBtn.style.top) || window.innerHeight / 2;
 
-            // 2. Apply the new positions
-            noBtn.style.left = `${x}px`;
-            noBtn.style.top = `${y}px`;
+            // 2. Define how far it can jump (in pixels)
+            // Lower this number to make the jump smaller!
+            const jumpRange = 100; 
+
+            // 3. Calculate a random offset between -100 and +100
+            let randomX = (Math.random() - 0.5) * 2 * jumpRange;
+            let randomY = (Math.random() - 0.5) * 2 * jumpRange;
+
+            let newX = currentX + randomX;
+            let newY = currentY + randomY;
+
+            // 4. Boundary Check: Make sure it doesn't jump off the screen
+            const maxX = window.innerWidth - noBtn.offsetWidth;
+            const maxY = window.innerHeight - noBtn.offsetHeight;
+
+            // Clamp the values (ensure it stays between 0 and max)
+            newX = Math.min(Math.max(newX, 0), maxX);
+            newY = Math.min(Math.max(newY, 0), maxY);
+
+            // 5. Apply new position
+            noBtn.style.left = `${newX}px`;
+            noBtn.style.top = `${newY}px`;
             
-            // 3. Change text just like in the video
+            // Text change logic
             phraseIndex = (phraseIndex + 1) % phrases.length;
             noBtn.innerText = phrases[phraseIndex];
             
-            // Optional: Make the Yes button grow bigger every time they try to click No
+            // Grow Yes button logic
             const yesBtn = document.getElementById("yesBtn");
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = `${currentSize + 2}px`;
@@ -141,4 +161,5 @@
         }
     </script>
 </body>
+
 </html>
