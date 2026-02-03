@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <style>
+        body {
+            background-color: #ffe6e6; /* Cute pink background */
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden; /* Prevents scrollbars when button moves */
+            text-align: center;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .buttons {
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 15px 30px;
+            font-size: 1.5rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        #yesBtn {
+            background-color: #ff4d6d;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            background-color: #ff2a55;
+        }
+
+        #noBtn {
+            background-color: #ffffff;
+            color: #ff4d6d;
+            border: 2px solid #ff4d6d;
+            font-weight: bold;
+            position: absolute; /* Allows the button to move freely */
+        }
+
+        /* The hidden success message */
+        #successMessage {
+            display: none;
+            color: #d63384;
+        }
+        
+        #successMessage img {
+            max-width: 300px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="questionBox">
+            <h1 id="mainText">Will you be my Valentine? 💖</h1>
+            
+            <div class="buttons">
+                <button id="yesBtn" onclick="acceptLove()">Yes! 😍</button>
+                <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No 😢</button>
+            </div>
+        </div>
+
+        <div id="successMessage">
+            <h1>Yay!!! I knew you'd say yes! 🎉</h1>
+            <p>You just made me the happiest person!</p>
+            <img src="https://media.giphy.com/media/T86i6yDyOYz7J6dPhf/giphy.gif" alt="Happy Cat">
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById("noBtn");
+        const mainText = document.getElementById("mainText");
+        
+        // Phrases to cycle through when they try to click No
+        const phrases = [
+            "No 😢",
+            "Are you sure?",
+            "Really sure?",
+            "Think again!",
+            "Last chance!",
+            "Surely not?",
+            "You might regret this!",
+            "Give it another thought!",
+            "Come on, click Yes!",
+            "You can't escape destiny!"
+        ];
+        
+        let phraseIndex = 0;
+
+        function moveButton() {
+            // 1. Calculate random positions within the screen
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+
+            // 2. Apply the new positions
+            noBtn.style.left = `${x}px`;
+            noBtn.style.top = `${y}px`;
+            
+            // 3. Change text just like in the video
+            phraseIndex = (phraseIndex + 1) % phrases.length;
+            noBtn.innerText = phrases[phraseIndex];
+            
+            // Optional: Make the Yes button grow bigger every time they try to click No
+            const yesBtn = document.getElementById("yesBtn");
+            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+            yesBtn.style.fontSize = `${currentSize + 2}px`;
+        }
+
+        function acceptLove() {
+            document.getElementById("questionBox").style.display = "none";
+            document.getElementById("successMessage").style.display = "block";
+            
+            // Trigger confetti effect (optional simplified version)
+            document.body.style.backgroundColor = "#ffccd5";
+        }
+    </script>
+</body>
+</html>
