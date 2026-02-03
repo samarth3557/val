@@ -4,15 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You ❤️</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Sacramento&display=swap" rel="stylesheet">
     <style>
         body {
-            /* Softer, more romantic pink gradient */
-            background: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%);
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            font-family: 'Indie Flower', cursive;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,30 +18,26 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.9);
             padding: 40px;
-            border-radius: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             text-align: center;
             max-width: 400px;
             width: 90%;
+            position: relative;
         }
 
         h1 {
-            /* Elegant Cursive Font */
-            font-family: 'Great Vibes', cursive; 
+            font-family: 'Sacramento', cursive;
             color: #d63384;
-            font-size: 4rem; /* Made bigger for impact */
-            margin: 10px 0 20px 0;
-            line-height: 1.2;
-            font-weight: normal;
+            font-size: 3.5rem;
+            margin: 10px 0;
         }
 
         p {
-            /* Readable Cursive Font */
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.5rem;
-            color: #555;
+            font-size: 1.2rem;
+            color: #666;
             margin-bottom: 30px;
         }
 
@@ -53,52 +45,63 @@
             width: 100%;
             max-width: 250px;
             border-radius: 15px;
-            margin-bottom: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
 
         .btn-group {
             position: relative;
-            height: 60px;
+            height: 60px; /* Space for buttons to move */
         }
 
         button {
-            font-family: 'Dancing Script', cursive; /* Matches the text */
-            font-weight: 700;
-            font-size: 1.3rem;
-            padding: 12px 35px;
+            font-family: 'Indie Flower', cursive;
+            font-size: 1.2rem;
+            padding: 10px 30px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 10;
         }
 
         #yesBtn {
             background-color: #ff4d6d;
             color: white;
-            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
             margin-right: 15px;
-        }
-        
-        #yesBtn:hover {
-            transform: scale(1.05);
-            background-color: #ff2a55;
         }
 
         #noBtn {
-            background-color: transparent;
+            background-color: #fff;
             color: #ff4d6d;
             border: 2px solid #ff4d6d;
-            position: absolute; /* Needed for movement */
         }
 
         /* Success Message styling */
         #success {
             display: none;
         }
+        
+        /* Floating hearts background animation */
+        .heart {
+            position: absolute;
+            color: #fff;
+            opacity: 0.5;
+            animation: float 6s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
     </style>
 </head>
 <body>
+
+    <div id="hearts-container"></div>
 
     <div class="card">
         <div id="question">
@@ -128,25 +131,33 @@
         const yesBtn = document.getElementById("yesBtn");
         const mainGif = document.getElementById("mainGif");
         
+        // List of GIFs for reactions
         const gifs = {
             ask: "https://media1.tenor.com/m/K2sEqmF-WwQAAAAC/mochi-peach.gif",
-            sad: "https://media1.tenor.com/m/bCjpZgO_gS0AAAAC/mochi-cat.gif"
+            sad: "https://media1.tenor.com/m/bCjpZgO_gS0AAAAC/mochi-cat.gif" // Crying cat
         };
 
-        const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Look at my face 🥺", "Last chance!"];
+        const phrases = [
+            "No 💔", "Please?", "I'll be sad...", "Don't do this!", 
+            "Look at my face 🥺", "Last chance!", "I'm gonna cry..."
+        ];
+        
         let phraseIndex = 0;
 
         function moveButton() {
-            mainGif.src = gifs.sad; // Change image to sad
+            // Change GIF to sad because she is trying to click No
+            mainGif.src = gifs.sad;
 
-            // Random position logic
-            const jumpRange = 100;
+            // Make the jump range smaller (fixed jump distance logic)
+            const jumpRange = 100; // Restricted area
             const randomX = (Math.random() - 0.5) * 2 * jumpRange;
             const randomY = (Math.random() - 0.5) * 2 * jumpRange;
             
+            // Get current positions
             const currentX = parseFloat(noBtn.style.left) || 0;
             const currentY = parseFloat(noBtn.style.top) || 0;
             
+            noBtn.style.position = "absolute"; // Ensure it can move
             noBtn.style.left = `${currentX + randomX}px`;
             noBtn.style.top = `${currentY + randomY}px`;
 
@@ -154,7 +165,7 @@
             phraseIndex = (phraseIndex + 1) % phrases.length;
             noBtn.innerText = phrases[phraseIndex];
 
-            // Grow Yes Button
+            // Make Yes button Grow
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = `${currentSize + 2}px`;
         }
@@ -162,7 +173,23 @@
         function handleYes() {
             document.getElementById("question").style.display = "none";
             document.getElementById("success").style.display = "block";
+            createConfetti();
         }
+
+        // Background Hearts Logic
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            for(let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤';
+                heart.className = 'heart';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 3 + 4 + 's'; // 4-7s
+                heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
     </script>
 </body>
 </html>
