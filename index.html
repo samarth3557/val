@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Sacramento&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -21,7 +21,7 @@
             position: relative; 
         }
 
-        /* --- FLOATING HEARTS CSS --- */
+        /* --- FLOATING HEARTS (Background) --- */
         .heart {
             position: fixed;
             color: rgba(255, 255, 255, 0.6);
@@ -36,7 +36,7 @@
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- BACKGROUND STATIC PHOTOS CSS --- */
+        /* --- STATIC BACKGROUND PHOTOS (Visible initially) --- */
         .photo-wrapper {
             position: absolute;
             width: 100%;
@@ -45,6 +45,7 @@
             left: 0;
             z-index: 1;
             pointer-events: none;
+            transition: opacity 1s ease; /* Smooth fade out */
         }
 
         .polaroid {
@@ -66,7 +67,6 @@
             border: 1px solid #eee;
         }
 
-        /* Positions for static background photos */
         .p1 { top: 10%; left: 10%; transform: rotate(-10deg); }
         .p2 { top: 15%; right: 10%; transform: rotate(10deg); }
         .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
@@ -80,16 +80,17 @@
             .p4 { bottom: 5%; right: -10px; }
         }
 
-        /* --- DROPPING PHOTOS ANIMATION --- */
+        /* --- FALLING PHOTOS (Appear after Yes) --- */
         .falling-photo {
             position: fixed;
             top: -200px;
-            z-index: 5; /* Above background, behind card */
+            z-index: 20; /* In front of everything */
             width: 150px;
             background: white;
             padding: 10px 10px 25px 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            animation: fallDown 8s linear forwards;
+            animation: fallDown 6s linear forwards; 
+            pointer-events: none;
         }
 
         .falling-photo img {
@@ -98,28 +99,33 @@
         }
 
         @keyframes fallDown {
-            0% { transform: translateY(0) rotate(0deg); }
+            0% { transform: translateY(-200px) rotate(0deg); }
             100% { transform: translateY(120vh) rotate(360deg); }
         }
 
-        /* --- MAIN CARD CSS --- */
+        /* --- MAIN CARD --- */
         .card {
             background: rgba(255, 255, 255, 0.95);
-            padding: 50px 40px; 
+            padding: 40px; 
             border-radius: 25px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             text-align: center;
             max-width: 400px;
             width: 90%;
-            z-index: 10;
+            z-index: 50; /* Top layer */
             position: relative;
+            transition: all 0.5s ease;
+            max-height: 80vh; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         h1 {
             font-family: 'Great Vibes', cursive; 
             color: #d63384;
             font-size: 3.5rem; 
-            margin: 0 0 40px 0; 
+            margin: 0 0 30px 0; 
             line-height: 1.2;
             font-weight: normal;
         }
@@ -132,15 +138,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .btn-group {
-            position: relative;
-            height: 60px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
+        /* Buttons */
         button {
             font-family: 'Dancing Script', cursive;
             font-weight: 700;
@@ -150,7 +148,14 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 20;
+            z-index: 60;
+            margin: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
         }
 
         #yesBtn {
@@ -159,10 +164,7 @@
             box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
         }
         
-        #yesBtn:hover {
-            transform: scale(1.05);
-            background-color: #ff2a55;
-        }
+        #yesBtn:hover { transform: scale(1.05); background-color: #ff2a55; }
 
         #noBtn {
             background-color: transparent;
@@ -171,36 +173,56 @@
             position: relative; 
         }
 
-        #success {
+        #readMoreBtn {
+            background-color: #d63384;
+            color: white;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(214, 51, 132, 0.4);
+            font-size: 1.1rem;
+        }
+
+        /* --- HIDDEN SECTIONS --- */
+        #success, #message-area {
             display: none;
         }
+
+        /* Message Area Styles */
+        #message-area p {
+            font-family: 'Sacramento', cursive; 
+            font-size: 1.6rem;
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            white-space: pre-wrap; 
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto; 
+            padding-right: 10px;
+        }
+        
+        #message-area p::-webkit-scrollbar { width: 5px; }
+        #message-area p::-webkit-scrollbar-thumb { background: #ffb3c1; border-radius: 10px; }
+
     </style>
 </head>
 <body>
 
     <audio id="bgMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        <source src="song.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
 
     <div id="hearts-container"></div>
 
-    <div class="photo-wrapper">
-        <div class="polaroid p1">
-            <img src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=300&auto=format&fit=crop" alt="Memory 1">
-        </div>
-        <div class="polaroid p2">
-            <img src="https://images.unsplash.com/photo-1583864697784-a0efc8379f70?q=80&w=300&auto=format&fit=crop" alt="Memory 2">
-        </div>
-        <div class="polaroid p3">
-            <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300&auto=format&fit=crop" alt="Memory 3">
-        </div>
-        <div class="polaroid p4">
-            <img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=300&auto=format&fit=crop" alt="Memory 4">
-        </div>
+    <div id="static-photos" class="photo-wrapper">
+        <div class="polaroid p1"><img src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=300" alt="1"></div>
+        <div class="polaroid p2"><img src="https://images.unsplash.com/photo-1583864697784-a0efc8379f70?q=80&w=300" alt="2"></div>
+        <div class="polaroid p3"><img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300" alt="3"></div>
+        <div class="polaroid p4"><img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=300" alt="4"></div>
     </div>
 
     <div class="card">
+        
         <div id="question">
             <h1>Will you be my Valentine?</h1>
             <div class="btn-group">
@@ -211,10 +233,25 @@
 
         <div id="success">
             <div class="gif-container">
-                <img src="https://media1.tenor.com/m/gUiu1zyxfzYAAAAC/bear-kiss-bear-kisses.gif" alt="Happy kissing cats">
+                <img src="https://media1.tenor.com/m/gUiu1zyxfzYAAAAC/bear-kiss-bear-kisses.gif" alt="Kisses">
             </div>
             <h1>Love you Jaasthi Kandha!! ❤️</h1>
+            <button id="readMoreBtn" onclick="showLetter()">Read My Message 💌</button>
         </div>
+
+        <div id="message-area">
+            <h1>For You...</h1>
+            <p>My Dearest,
+
+From the moment I met you, my world became brighter. You are my happiness, my safe place, and my greatest adventure. 
+
+I promise to make you smile every single day. I love you more than words can say.
+
+Forever yours,
+Me ❤️</p>
+            <button id="yesBtn" onclick="closeLetter()">Back ❤️</button>
+        </div>
+
     </div>
 
     <script>
@@ -222,19 +259,29 @@
         const yesBtn = document.getElementById("yesBtn");
         const heartsContainer = document.getElementById("hearts-container");
         const audio = document.getElementById("bgMusic");
+        const staticPhotos = document.getElementById("static-photos");
 
-        // LIST OF PHOTOS TO DROP - REPLACE THESE WITH YOUR OWN!
+        // --- 12 UNIQUE PHOTOS FOR THE RAIN EFFECT ---
+        // Replace these URLs with your 12 actual photo links
         const myPhotos = [
-            "https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=300",
-            "https://images.unsplash.com/photo-1583864697784-a0efc8379f70?q=80&w=300",
-            "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300",
-            "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=300"
+            "https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=300",
+            "https://images.unsplash.com/photo-1583864697784-a0efc8379f70?w=300",
+            "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=300",
+            "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=300",
+            "https://images.unsplash.com/photo-1516726817505-f5ed825624d8?w=300",
+            "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?w=300",
+            "https://images.unsplash.com/photo-1519741497674-611481863552?w=300",
+            "https://images.unsplash.com/photo-1520854221256-17451cc330e7?w=300",
+            "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=300",
+            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300",
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300",
+            "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300"
         ];
         
-        const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Look at my face 🥺", "Last chance!"];
+        const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Last chance!"];
         let phraseIndex = 0;
 
-        // --- Logic for Floating Hearts (Background) ---
+        // Background Hearts
         function createHeart() {
             const heart = document.createElement("div");
             heart.classList.add("heart");
@@ -247,57 +294,52 @@
         }
         setInterval(createHeart, 300);
 
-        // --- Logic for Dropping Photos ---
+        // Falling Photos
         function dropPhoto() {
             const photoDiv = document.createElement("div");
             photoDiv.classList.add("falling-photo");
-
-            // Pick a random photo from the list
             const randomImg = myPhotos[Math.floor(Math.random() * myPhotos.length)];
-            
             photoDiv.innerHTML = `<img src="${randomImg}" alt="Memory">`;
-            
-            // Random horizontal position
             photoDiv.style.left = Math.random() * 90 + "vw"; 
-            
-            // Random rotation start
             photoDiv.style.transform = `rotate(${Math.random() * 360}deg)`;
-
             document.body.appendChild(photoDiv);
-
-            // Cleanup after animation finishes
-            setTimeout(() => {
-                photoDiv.remove();
-            }, 8000); 
+            setTimeout(() => { photoDiv.remove(); }, 6000); 
         }
 
-        // --- Logic for No Button Movement ---
+        // Move "No" Button
         function moveButton() {
             noBtn.style.position = "absolute"; 
-            const maxX = window.innerWidth - noBtn.offsetWidth;
-            const maxY = window.innerHeight - noBtn.offsetHeight;
             noBtn.style.left = `${Math.random() * 80}%`;
             noBtn.style.top = `${Math.random() * 80}%`;
             phraseIndex = (phraseIndex + 1) % phrases.length;
             noBtn.innerText = phrases[phraseIndex];
-            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
-            yesBtn.style.fontSize = `${currentSize + 2}px`;
         }
 
+        // Handle "Yes" Click
         function handleYes() {
             document.getElementById("question").style.display = "none";
             document.getElementById("success").style.display = "block";
             
-            // 1. Play Music
-            audio.play().catch(error => console.log("Audio play failed (user interaction needed first):", error));
+            // HIDE static background photos
+            staticPhotos.style.opacity = "0"; 
 
-            // 2. Start Dropping Photos every 3 seconds
-            setInterval(dropPhoto, 3000);
+            // Play Audio
+            audio.play().catch(e => console.log("Audio needed interaction"));
 
-            // 3. Burst of hearts
-            for(let i=0; i<30; i++) {
-                setTimeout(createHeart, i * 50);
-            }
+            // Start Raining Photos (Faster speed: 800ms)
+            setInterval(dropPhoto, 800);
+        }
+
+        // Show the Letter
+        function showLetter() {
+            document.getElementById("success").style.display = "none";
+            document.getElementById("message-area").style.display = "block";
+        }
+
+        // Go back to Success screen
+        function closeLetter() {
+            document.getElementById("message-area").style.display = "none";
+            document.getElementById("success").style.display = "block";
         }
     </script>
 </body>
