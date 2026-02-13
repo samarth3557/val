@@ -21,11 +21,11 @@
             position: relative; 
         }
 
-        /* --- BACKGROUND HEARTS/ROSES (Floating UP) --- */
+        /* --- BACKGROUND HEARTS/ROSES --- */
         .floating-element {
             position: fixed;
             color: rgba(255, 255, 255, 0.8);
-            bottom: -50px; /* Starts at bottom */
+            bottom: -50px;
             animation: floatUp linear infinite;
             z-index: 0; 
             pointer-events: none; 
@@ -37,7 +37,7 @@
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- STATIC BACKGROUND PHOTOS (Visible initially) --- */
+        /* --- STATIC BACKGROUND PHOTOS --- */
         .photo-wrapper {
             position: absolute;
             width: 100%;
@@ -54,7 +54,6 @@
             background: white;
             padding: 10px 10px 25px 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transform: rotate(-5deg);
             width: 150px;
             height: auto;
             border-radius: 2px;
@@ -63,26 +62,24 @@
 
         .polaroid img {
             width: 100%;
-            height: auto;
             display: block;
             border: 1px solid #eee;
         }
 
-        /* Positions for the 4 static background photos */
+        /* Initial positions for static photos */
         .p1 { top: 10%; left: 10%; transform: rotate(-10deg); }
         .p2 { top: 15%; right: 10%; transform: rotate(10deg); }
         .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
         .p4 { bottom: 15%; right: 15%; transform: rotate(-8deg); }
 
-        /* --- FALLING PHOTOS (Dropping DOWN) --- */
+        /* --- FALLING PHOTOS FIX --- */
         .falling-photo {
             position: fixed;
-            top: -250px; /* Starts ABOVE the screen */
-            z-index: 20; /* Behind the card, but in front of background */
+            z-index: 20; /* Behind the card */
             background: white;
             padding: 10px 10px 25px 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            /* Slower animation (10s) to prevent overlap */
+            /* We use 'top' for animation so we can use 'transform' for static rotation */
             animation: fallDown 10s linear forwards; 
             pointer-events: none;
         }
@@ -92,9 +89,10 @@
             display: block;
         }
 
+        /* Keyframes: Move from Top to Bottom WITHOUT spinning */
         @keyframes fallDown {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(120vh) rotate(360deg); } /* Moves to bottom */
+            0% { top: -300px; }
+            100% { top: 120vh; }
         }
 
         /* --- MAIN CARD --- */
@@ -106,9 +104,8 @@
             text-align: center;
             max-width: 400px;
             width: 90%;
-            z-index: 50; /* Topmost layer */
+            z-index: 50; 
             position: relative;
-            transition: all 0.5s ease;
             max-height: 80vh; 
             display: flex;
             flex-direction: column;
@@ -254,9 +251,7 @@ Me ❤️</p>
         const audio = document.getElementById("bgMusic");
         const staticPhotos = document.getElementById("static-photos");
 
-        /* If you have 23 images, just list them here.
-           Don't worry about .jpg vs .jpeg, the code below handles it automatically!
-        */
+        /* Photo List: 1.jpg to 23.jpg */
         const myPhotos = [];
         for (let i = 1; i <= 23; i++) {
             myPhotos.push(i + ".jpg");
@@ -279,27 +274,28 @@ Me ❤️</p>
         }
         setInterval(createFloatingElement, 300);
 
-        // Falling Photos Logic
+        // --- FIXED FALLING PHOTOS LOGIC ---
         function dropPhoto() {
             const photoDiv = document.createElement("div");
             photoDiv.classList.add("falling-photo");
             
             const randomImgName = myPhotos[Math.floor(Math.random() * myPhotos.length)];
             
-            // Create image with ERROR HANDLING for .jpeg
             const img = document.createElement("img");
             img.src = randomImgName;
             img.alt = "Memory";
-            // This line fixes the Invisible Image issue:
+            // Fix for .jpeg
             img.onerror = function() { this.src = this.src.replace(".jpg", ".jpeg"); };
             
             photoDiv.appendChild(img);
             
-            // Random Position
+            // Random Horizontal Position
             photoDiv.style.left = Math.random() * 90 + "vw"; 
             
-            // Random Rotation
-            photoDiv.style.transform = `rotate(${Math.random() * 360}deg)`;
+            // --- FIX: LIMIT ROTATION ---
+            // Random number between -20 and +20 degrees only
+            const randomTilt = Math.random() * 40 - 20; 
+            photoDiv.style.transform = `rotate(${randomTilt}deg)`;
             
             // Random Size: 100px to 220px
             const randomWidth = Math.floor(Math.random() * 120) + 100;
@@ -307,7 +303,6 @@ Me ❤️</p>
 
             document.body.appendChild(photoDiv);
             
-            // Cleanup after 10 seconds (matched with CSS animation)
             setTimeout(() => { photoDiv.remove(); }, 10000); 
         }
 
@@ -325,8 +320,8 @@ Me ❤️</p>
             staticPhotos.style.opacity = "0"; 
             audio.play().catch(e => console.log("Audio interaction needed"));
             
-            // INCREASED INTERVAL TO 2000ms (2 seconds) to prevent overlap
-            setInterval(dropPhoto, 2000); 
+            // Interval set to 2.5 seconds to prevent overlapping
+            setInterval(dropPhoto, 2500); 
         }
 
         function showLetter() {
