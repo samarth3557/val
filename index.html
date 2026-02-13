@@ -117,12 +117,11 @@
             font-family: 'Pacifico', cursive; 
             color: #d63384;
             font-size: 3rem; 
-            margin: 0 0 10px 0; /* Reduced margin to fit caption */
+            margin: 0 0 10px 0; 
             line-height: 1.3;
             font-weight: normal;
         }
         
-        /* The New Caption Style */
         .caption-text {
             font-family: 'Quicksand', sans-serif;
             font-size: 1.1rem;
@@ -195,13 +194,13 @@
 
         #message-area p {
             font-family: 'Quicksand', sans-serif;
-            font-size: 1.2rem;
+            font-size: 1rem; /* Slightly smaller to fit the long text nicely */
             color: #444;
             line-height: 1.6;
             margin-bottom: 20px;
-            white-space: pre-wrap; 
+            white-space: pre-wrap; /* THIS PRESERVES YOUR LINE BREAKS */
             text-align: left;
-            max-height: 300px;
+            max-height: 400px; /* Increased height for long letter */
             overflow-y: auto; 
             padding-right: 10px;
         }
@@ -239,20 +238,37 @@
             <div class="gif-container">
                 <img src="https://media1.tenor.com/m/gUiu1zyxfzYAAAAC/bear-kiss-bear-kisses.gif" alt="Kisses">
             </div>
-            <h1>Love you Jaasthi Kandha!! ❤️</h1>
+            <h1>Love you jaasthi Kandha!! ❤️</h1>
             <button id="readMoreBtn" onclick="showLetter()">Read My Message 💌</button>
         </div>
 
         <div id="message-area">
             <h1>For You...</h1>
-            <p>My Dearest,
+            <p>This is for you..❤️
 
-From the moment I met you, my world became brighter. You are my happiness, my safe place, and my greatest adventure. 
+Gottu, naavu ibru perfect alla. We still have so many things to learn about each other.
 
-I promise to make you smile every single day. I love you more than words can say.
+But ondh vishya enandre: I'm all in.
+Yeste kashta barli or life eshte hard aagli... naanu ninna bittu ellu hogalla. Even when we disagree, I won't give up on us.🥺
 
-Forever yours,
-Me ❤️</p>
+Yavagadru ninge full tired aagi, kelsa madoke mood ilde iddaga .. don't worry. Aduge naane madtini, paathre naane tolitini, mane full naane clean madtini.
+
+Yavagadru bad day idhu, ninge bejar aagidre... just come and rest your head on my lap. Nin thale savri, ninge samadhana aago vargu pakadalle irthini.🫣
+
+Matthe periods time alli... nin mood swings, nin kopa... ellanu I'll try to handle maximum with patience. Ninna favorite food order maadi, ottige koothkondu we will watch your favorite movie.🥰
+
+Bore adhaga, change beku ansidre... ninge ista aago kade karkond hogtini. Whatever makes you smile.🙃
+
+Yen aadru sari, nanu yavaglu ninna pakdhalle, jothege irthini. No matter what happens. ❤️🫂
+
+I would really really love you and take care of you, the way you like. I am all ready for that.🫴
+
+I choose you. Again and again. Yavaglu neene. ✨
+Nagu irli, alu irli, late-night talks irli, jagla irli... I am here for everything.
+
+Innu bere enadru miss maadidre please helu Kandha... I will do that too.
+
+Love you jaasthi Kandha, Take care!!! 😚</p>
             <button id="yesBtn" onclick="closeLetter()">Back ❤️</button>
         </div>
     </div>
@@ -286,7 +302,6 @@ Me ❤️</p>
         }
         setInterval(createFloatingElement, 300);
 
-        // --- SMART DROPPING LOGIC ---
         function dropPhoto() {
             const photoDiv = document.createElement("div");
             photoDiv.classList.add("falling-photo");
@@ -298,34 +313,25 @@ Me ❤️</p>
             img.onerror = function() { this.src = this.src.replace(".jpg", ".jpeg"); };
             photoDiv.appendChild(img);
 
-            // --- MOBILE VS DESKTOP LOGIC ---
             if (window.innerWidth < 600) {
-                // MOBILE MODE:
-                // 1. Fall anywhere (0-100%)
+                // MOBILE MODE
                 photoDiv.style.left = Math.random() * 85 + "vw";
-                // 2. Bring to FRONT (z-index 60 > card 50)
                 photoDiv.style.zIndex = "60";
-                // 3. Make slightly transparent so text is readable
                 photoDiv.style.opacity = "0.8"; 
-                // 4. Make smaller for mobile
-                const randomWidth = Math.floor(Math.random() * 50) + 60; // 60-110px
+                const randomWidth = Math.floor(Math.random() * 50) + 60; 
                 photoDiv.style.width = randomWidth + "px";
             } else {
-                // DESKTOP MODE:
-                // 1. Sides only (Left/Right)
+                // DESKTOP MODE (Left/Right)
                 let randomLeft;
                 if (Math.random() < 0.5) {
-                    randomLeft = Math.random() * 20; // Left
+                    randomLeft = Math.random() * 20; 
                 } else {
-                    randomLeft = Math.random() * 20 + 80; // Right
+                    randomLeft = Math.random() * 20 + 80; 
                 }
                 photoDiv.style.left = randomLeft + "vw";
-                // 2. Keep BEHIND card
                 photoDiv.style.zIndex = "20";
-                // 3. Full opacity
                 photoDiv.style.opacity = "1";
-                // 4. Normal size
-                const randomWidth = Math.floor(Math.random() * 120) + 100; // 100-220px
+                const randomWidth = Math.floor(Math.random() * 120) + 100;
                 photoDiv.style.width = randomWidth + "px";
             }
             
@@ -350,7 +356,6 @@ Me ❤️</p>
             staticPhotos.style.opacity = "0"; 
             audio.play().catch(e => console.log("Audio interaction needed"));
             
-            // Frequency: 0.6s
             setInterval(dropPhoto, 600); 
         }
 
