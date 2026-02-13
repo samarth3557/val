@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&family=Sacramento&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
 
     <style>
         body {
@@ -21,14 +21,15 @@
             position: relative; 
         }
 
-        /* --- FLOATING HEARTS (Background) --- */
-        .heart {
+        /* --- BACKGROUND ELEMENTS (Hearts & Roses) --- */
+        .floating-element {
             position: fixed;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.8);
             bottom: -50px;
             animation: floatUp linear infinite;
             z-index: 0; 
             pointer-events: none; 
+            user-select: none;
         }
 
         @keyframes floatUp {
@@ -45,7 +46,7 @@
             left: 0;
             z-index: 1;
             pointer-events: none;
-            transition: opacity 1s ease; /* Smooth fade out */
+            transition: opacity 1s ease; 
         }
 
         .polaroid {
@@ -67,25 +68,17 @@
             border: 1px solid #eee;
         }
 
+        /* Positions for the 4 static background photos */
         .p1 { top: 10%; left: 10%; transform: rotate(-10deg); }
         .p2 { top: 15%; right: 10%; transform: rotate(10deg); }
         .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
         .p4 { bottom: 15%; right: 15%; transform: rotate(-8deg); }
 
-        @media (max-width: 600px) {
-            .polaroid { width: 100px; padding: 5px 5px 15px 5px; opacity: 0.6; }
-            .p1 { top: 5%; left: -10px; }
-            .p2 { top: 5%; right: -10px; }
-            .p3 { bottom: 5%; left: -10px; }
-            .p4 { bottom: 5%; right: -10px; }
-        }
-
         /* --- FALLING PHOTOS (Appear after Yes) --- */
         .falling-photo {
             position: fixed;
-            top: -200px;
-            z-index: 20; /* In front of everything */
-            width: 150px;
+            top: -300px;
+            z-index: 20; 
             background: white;
             padding: 10px 10px 25px 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -99,7 +92,7 @@
         }
 
         @keyframes fallDown {
-            0% { transform: translateY(-200px) rotate(0deg); }
+            0% { transform: translateY(-300px) rotate(0deg); }
             100% { transform: translateY(120vh) rotate(360deg); }
         }
 
@@ -112,7 +105,7 @@
             text-align: center;
             max-width: 400px;
             width: 90%;
-            z-index: 50; /* Top layer */
+            z-index: 50; 
             position: relative;
             transition: all 0.5s ease;
             max-height: 80vh; 
@@ -122,12 +115,17 @@
         }
 
         h1 {
-            font-family: 'Great Vibes', cursive; 
+            font-family: 'Pacifico', cursive; /* Fancy Font */
             color: #d63384;
-            font-size: 3.5rem; 
+            font-size: 3rem; 
             margin: 0 0 30px 0; 
-            line-height: 1.2;
+            line-height: 1.3;
             font-weight: normal;
+        }
+
+        /* Body text font */
+        p, button {
+            font-family: 'Quicksand', sans-serif; /* Clean Font */
         }
 
         .gif-container img {
@@ -140,10 +138,9 @@
 
         /* Buttons */
         button {
-            font-family: 'Dancing Script', cursive;
             font-weight: 700;
-            font-size: 1.3rem;
-            padding: 12px 35px;
+            font-size: 1.2rem;
+            padding: 12px 30px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
@@ -188,8 +185,8 @@
 
         /* Message Area Styles */
         #message-area p {
-            font-family: 'Sacramento', cursive; 
-            font-size: 1.6rem;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.2rem;
             color: #444;
             line-height: 1.6;
             margin-bottom: 20px;
@@ -215,10 +212,10 @@
     <div id="hearts-container"></div>
 
     <div id="static-photos" class="photo-wrapper">
-        <div class="polaroid p1"><img src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=300" alt="1"></div>
-        <div class="polaroid p2"><img src="https://images.unsplash.com/photo-1583864697784-a0efc8379f70?q=80&w=300" alt="2"></div>
-        <div class="polaroid p3"><img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300" alt="3"></div>
-        <div class="polaroid p4"><img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=300" alt="4"></div>
+        <div class="polaroid p1"><img src="1.jpg" alt="1"></div>
+        <div class="polaroid p2"><img src="2.jpg" alt="2"></div>
+        <div class="polaroid p3"><img src="3.jpg" alt="3"></div>
+        <div class="polaroid p4"><img src="4.jpg" alt="4"></div>
     </div>
 
     <div class="card">
@@ -261,52 +258,54 @@ Me ❤️</p>
         const audio = document.getElementById("bgMusic");
         const staticPhotos = document.getElementById("static-photos");
 
-        // --- 12 UNIQUE PHOTOS FOR THE RAIN EFFECT ---
-        // Replace these URLs with your 12 actual photo links
+        /* YOUR 22 PHOTOS 
+           Make sure your files are named 1.jpg, 2.jpg ... up to 22.jpg
+           and are in the same folder as this file.
+        */
         const myPhotos = [
-            "https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?w=300",
-            "https://images.unsplash.com/photo-1583864697784-a0efc8379f70?w=300",
-            "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=300",
-            "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=300",
-            "https://images.unsplash.com/photo-1516726817505-f5ed825624d8?w=300",
-            "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?w=300",
-            "https://images.unsplash.com/photo-1519741497674-611481863552?w=300",
-            "https://images.unsplash.com/photo-1520854221256-17451cc330e7?w=300",
-            "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=300",
-            "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300",
-            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300",
-            "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300"
+            "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", 
+            "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg",
+            "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg",
+            "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg",
+            "21.jpg", "22.jpg"
         ];
         
         const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Last chance!"];
         let phraseIndex = 0;
 
-        // Background Hearts
-        function createHeart() {
-            const heart = document.createElement("div");
-            heart.classList.add("heart");
-            heart.innerHTML = "❤️";
-            heart.style.left = Math.random() * 100 + "vw";
-            heart.style.animationDuration = Math.random() * 3 + 4 + "s"; 
-            heart.style.fontSize = Math.random() * 20 + 20 + "px"; 
-            heartsContainer.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 7000);
+        // --- Background Floating Elements (Hearts & Roses) ---
+        function createFloatingElement() {
+            const el = document.createElement("div");
+            el.classList.add("floating-element");
+            el.innerHTML = Math.random() < 0.5 ? "❤️" : "🌹";
+            el.style.left = Math.random() * 100 + "vw";
+            el.style.animationDuration = Math.random() * 3 + 4 + "s"; 
+            const size = Math.random() * 20 + 20; 
+            el.style.fontSize = size + "px"; 
+            heartsContainer.appendChild(el);
+            setTimeout(() => { el.remove(); }, 7000);
         }
-        setInterval(createHeart, 300);
+        setInterval(createFloatingElement, 300);
 
-        // Falling Photos
+        // --- Falling Photos with Random Sizes ---
         function dropPhoto() {
             const photoDiv = document.createElement("div");
             photoDiv.classList.add("falling-photo");
+            
             const randomImg = myPhotos[Math.floor(Math.random() * myPhotos.length)];
+            
             photoDiv.innerHTML = `<img src="${randomImg}" alt="Memory">`;
             photoDiv.style.left = Math.random() * 90 + "vw"; 
             photoDiv.style.transform = `rotate(${Math.random() * 360}deg)`;
+            
+            // Random Size: 100px to 220px
+            const randomWidth = Math.floor(Math.random() * 120) + 100;
+            photoDiv.style.width = randomWidth + "px";
+
             document.body.appendChild(photoDiv);
             setTimeout(() => { photoDiv.remove(); }, 6000); 
         }
 
-        // Move "No" Button
         function moveButton() {
             noBtn.style.position = "absolute"; 
             noBtn.style.left = `${Math.random() * 80}%`;
@@ -315,28 +314,19 @@ Me ❤️</p>
             noBtn.innerText = phrases[phraseIndex];
         }
 
-        // Handle "Yes" Click
         function handleYes() {
             document.getElementById("question").style.display = "none";
             document.getElementById("success").style.display = "block";
-            
-            // HIDE static background photos
             staticPhotos.style.opacity = "0"; 
-
-            // Play Audio
-            audio.play().catch(e => console.log("Audio needed interaction"));
-
-            // Start Raining Photos (Faster speed: 800ms)
-            setInterval(dropPhoto, 800);
+            audio.play().catch(e => console.log("Audio interaction needed"));
+            setInterval(dropPhoto, 600); // Speed: 600ms per photo
         }
 
-        // Show the Letter
         function showLetter() {
             document.getElementById("success").style.display = "none";
             document.getElementById("message-area").style.display = "block";
         }
 
-        // Go back to Success screen
         function closeLetter() {
             document.getElementById("message-area").style.display = "none";
             document.getElementById("success").style.display = "block";
