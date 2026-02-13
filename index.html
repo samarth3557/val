@@ -3,163 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Be My Valentine?</title>
+    <title>For You ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Sacramento&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #ffe6e6; /* Cute pink background */
-            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+            font-family: 'Indie Flower', cursive;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            overflow: hidden; /* Prevents scrollbars when button moves */
-            text-align: center;
+            overflow: hidden;
         }
 
-        .container {
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
             position: relative;
         }
 
         h1 {
+            font-family: 'Sacramento', cursive;
             color: #d63384;
-            font-size: 3rem;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
+            font-size: 3.5rem;
+            margin: 10px 0;
         }
 
-        .buttons {
-            margin-top: 30px;
+        p {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .gif-container img {
+            width: 100%;
+            max-width: 250px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn-group {
+            position: relative;
+            height: 60px; /* Space for buttons to move */
         }
 
         button {
-            padding: 15px 30px;
-            font-size: 1.5rem;
+            font-family: 'Indie Flower', cursive;
+            font-size: 1.2rem;
+            padding: 10px 30px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            margin: 10px;
-            transition: all 0.3s ease;
+            transition: transform 0.2s ease;
+            position: relative;
+            z-index: 10;
         }
 
         #yesBtn {
             background-color: #ff4d6d;
             color: white;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
-        }
-
-        #yesBtn:hover {
-            transform: scale(1.1);
-            background-color: #ff2a55;
+            box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
+            margin-right: 15px;
         }
 
         #noBtn {
-            background-color: #ffffff;
+            background-color: #fff;
             color: #ff4d6d;
             border: 2px solid #ff4d6d;
-            font-weight: bold;
-            position: absolute; /* Allows the button to move freely */
         }
 
-        /* The hidden success message */
-        #successMessage {
+        /* Success Message styling */
+        #success {
             display: none;
-            color: #d63384;
         }
         
-        #successMessage img {
-            max-width: 300px;
-            border-radius: 15px;
+        /* Floating hearts background animation */
+        .heart {
+            position: absolute;
+            color: #fff;
+            opacity: 0.5;
+            animation: float 6s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div id="questionBox">
-            <h1 id="mainText">Will you be my Valentine? 💖</h1>
+    <div id="hearts-container"></div>
+
+    <div class="card">
+        <div id="question">
+            <div class="gif-container">
+                <img id="mainGif" src="https://media1.tenor.com/m/K2sEqmF-WwQAAAAC/mochi-peach.gif" alt="Cute asking cat">
+            </div>
+            <h1>Will you be my Valentine?</h1>
+            <p>I promise to get you chocolate! 🍫</p>
             
-            <div class="buttons">
-                <button id="yesBtn" onclick="acceptLove()">Yes! 😍</button>
-                <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No 😢</button>
+            <div class="btn-group">
+                <button id="yesBtn" onclick="handleYes()">Yes! ❤️</button>
+                <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No 💔</button>
             </div>
         </div>
 
-        <div id="successMessage">
-            <h1>Yay!!! I knew you'd say yes! 🎉</h1>
-            <p>You just made me the happiest person!</p>
-            <img src="https://media.giphy.com/media/T86i6yDyOYz7J6dPhf/giphy.gif" alt="Happy Cat">
+        <div id="success">
+            <div class="gif-container">
+                <img src="https://media1.tenor.com/m/gUiu1zyxfzYAAAAC/bear-kiss-bear-kisses.gif" alt="Happy kissing cats">
+            </div>
+            <h1>Yay! I love you! ❤️</h1>
+            <p>See you on the 14th! 🥰</p>
         </div>
     </div>
 
     <script>
         const noBtn = document.getElementById("noBtn");
-        const mainText = document.getElementById("mainText");
+        const yesBtn = document.getElementById("yesBtn");
+        const mainGif = document.getElementById("mainGif");
         
-        // Phrases to cycle through when they try to click No
+        // List of GIFs for reactions
+        const gifs = {
+            ask: "https://media1.tenor.com/m/K2sEqmF-WwQAAAAC/mochi-peach.gif",
+            sad: "https://media1.tenor.com/m/bCjpZgO_gS0AAAAC/mochi-cat.gif" // Crying cat
+        };
+
         const phrases = [
-            "No 😢",
-            "Are you sure?",
-            "Really sure?",
-            "Think again!",
-            "Last chance!",
-            "Surely not?",
-            "You might regret this!",
-            "Give it another thought!",
-            "Come on, click Yes!",
-            "You can't escape destiny!"
+            "No 💔", "Please?", "I'll be sad...", "Don't do this!", 
+            "Look at my face 🥺", "Last chance!", "I'm gonna cry..."
         ];
         
         let phraseIndex = 0;
 
         function moveButton() {
-            // 1. Get current position 
-            // If it hasn't moved yet, we estimate it's near the center
-            const currentX = parseFloat(noBtn.style.left) || window.innerWidth / 2;
-            const currentY = parseFloat(noBtn.style.top) || window.innerHeight / 2;
+            // Change GIF to sad because she is trying to click No
+            mainGif.src = gifs.sad;
 
-            // 2. Define how far it can jump (in pixels)
-            // Lower this number to make the jump smaller!
-            const jumpRange = 100; 
-
-            // 3. Calculate a random offset between -100 and +100
-            let randomX = (Math.random() - 0.5) * 2 * jumpRange;
-            let randomY = (Math.random() - 0.5) * 2 * jumpRange;
-
-            let newX = currentX + randomX;
-            let newY = currentY + randomY;
-
-            // 4. Boundary Check: Make sure it doesn't jump off the screen
-            const maxX = window.innerWidth - noBtn.offsetWidth;
-            const maxY = window.innerHeight - noBtn.offsetHeight;
-
-            // Clamp the values (ensure it stays between 0 and max)
-            newX = Math.min(Math.max(newX, 0), maxX);
-            newY = Math.min(Math.max(newY, 0), maxY);
-
-            // 5. Apply new position
-            noBtn.style.left = `${newX}px`;
-            noBtn.style.top = `${newY}px`;
+            // Make the jump range smaller (fixed jump distance logic)
+            const jumpRange = 100; // Restricted area
+            const randomX = (Math.random() - 0.5) * 2 * jumpRange;
+            const randomY = (Math.random() - 0.5) * 2 * jumpRange;
             
-            // Text change logic
+            // Get current positions
+            const currentX = parseFloat(noBtn.style.left) || 0;
+            const currentY = parseFloat(noBtn.style.top) || 0;
+            
+            noBtn.style.position = "absolute"; // Ensure it can move
+            noBtn.style.left = `${currentX + randomX}px`;
+            noBtn.style.top = `${currentY + randomY}px`;
+
+            // Change Text
             phraseIndex = (phraseIndex + 1) % phrases.length;
             noBtn.innerText = phrases[phraseIndex];
-            
-            // Grow Yes button logic
-            const yesBtn = document.getElementById("yesBtn");
+
+            // Make Yes button Grow
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = `${currentSize + 2}px`;
         }
 
-        function acceptLove() {
-            document.getElementById("questionBox").style.display = "none";
-            document.getElementById("successMessage").style.display = "block";
-            
-            // Trigger confetti effect (optional simplified version)
-            document.body.style.backgroundColor = "#ffccd5";
+        function handleYes() {
+            document.getElementById("question").style.display = "none";
+            document.getElementById("success").style.display = "block";
+            createConfetti();
         }
+
+        // Background Hearts Logic
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            for(let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤';
+                heart.className = 'heart';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 3 + 4 + 's'; // 4-7s
+                heart.style.fontSize = Math.random() * 20 + 20 + 'px';
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
     </script>
 </body>
-
 </html>
