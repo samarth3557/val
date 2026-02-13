@@ -19,17 +19,17 @@
             margin: 0;
             overflow: hidden;
             position: relative; 
-            transition: background 0.5s ease; /* Smooth transition for background */
+            transition: background 0.5s ease; 
         }
 
-        /* --- COLLAGE BACKGROUND (Hidden by default) --- */
+        /* --- COLLAGE BACKGROUND --- */
         #collage-bg {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 5; /* Behind the card (50) but above everything else */
+            z-index: 5; 
             background-size: cover;
             background-position: center;
             opacity: 0;
@@ -37,10 +37,8 @@
             transition: opacity 1s ease;
         }
 
-        /* Use Desktop Image by default */
         #collage-bg { background-image: url('desktop-bg.jpg'); }
 
-        /* Use Mobile Image on small screens */
         @media (max-width: 600px) {
             #collage-bg { background-image: url('mobile-bg.jpg'); }
         }
@@ -61,7 +59,7 @@
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- STATIC POLAROIDS (Initial Screen) --- */
+        /* --- STATIC POLAROIDS --- */
         .photo-wrapper {
             position: absolute;
             width: 100%;
@@ -78,7 +76,7 @@
             background: white;
             padding: 10px 10px 25px 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            width: 150px;
+            width: 150px; /* Default desktop size */
             height: auto;
             border-radius: 2px;
             transition: transform 0.3s ease;
@@ -102,7 +100,6 @@
             will-change: transform, top, opacity;
             transform: translateZ(0); 
             backface-visibility: hidden;
-            /* SLOWED DOWN ANIMATION: 8s */
             animation: fallDown 8s linear forwards; 
             pointer-events: none; 
             opacity: 0; 
@@ -122,7 +119,12 @@
 
         /* --- MAIN CARD --- */
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            /* Changed opacity from 0.95 to 0.85 for transparency */
+            background: rgba(255, 255, 255, 0.85);
+            /* Added blur filter to make text readable over collage */
+            backdrop-filter: blur(8px); 
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            
             padding: 40px; 
             border-radius: 25px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
@@ -154,11 +156,19 @@
             font-weight: 700;
         }
 
+        /* --- MOBILE SPECIFIC TWEAKS --- */
         @media (max-width: 600px) {
-            h1 { font-size: 2.2rem; }
-            .card { padding: 20px; }
-            /* Hide static polaroids on small mobile screens to prevent clutter */
-            .polaroid { opacity: 0.5; width: 100px; }
+            /* Smaller heading font */
+            h1 { font-size: 2rem; } 
+            /* Smaller caption font */
+            .caption-text { font-size: 1rem; margin-bottom: 20px; }
+            /* Tighter padding in the card to make popup smaller */
+            .card { padding: 20px 15px; } 
+            /* BIGGER background images on mobile */
+            .polaroid { width: 140px; opacity: 0.9; }
+            /* Adjust positions slightly for mobile */
+            .p2 { top: 10%; right: 5%; }
+            .p3 { bottom: 5%; left: 5%; }
         }
 
         p, button {
@@ -220,8 +230,9 @@
 
         #message-area p {
             font-family: 'Quicksand', sans-serif;
-            font-size: 1rem; 
-            color: #444;
+            font-size: 1.05rem; /* Slightly increased for readability */
+            color: #333; /* Darker text for better contrast against transparent bg */
+            font-weight: 600; /* Slightly bolder text */
             line-height: 1.6;
             margin-bottom: 20px;
             white-space: pre-wrap; 
@@ -243,7 +254,6 @@
     </audio>
 
     <div id="collage-bg"></div>
-
     <div id="hearts-container"></div>
 
     <div id="static-photos" class="photo-wrapper">
@@ -317,7 +327,7 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
         
         const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Last chance!"];
         let phraseIndex = 0;
-        let rainInterval; // Variable to control the rain
+        let rainInterval; 
 
         function createFloatingElement() {
             const el = document.createElement("div");
@@ -369,7 +379,6 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
             photoDiv.style.transform = `rotate(${randomTilt}deg)`;
 
             document.body.appendChild(photoDiv);
-            // Longer cleanup to match slower animation
             setTimeout(() => { photoDiv.remove(); }, 8000); 
         }
 
@@ -387,7 +396,6 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
             staticPhotos.style.opacity = "0"; 
             audio.play().catch(e => console.log("Audio interaction needed"));
             
-            // Start the rain (0.6s frequency)
             rainInterval = setInterval(dropPhoto, 600); 
         }
 
@@ -395,14 +403,11 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
             document.getElementById("success").style.display = "none";
             document.getElementById("message-area").style.display = "block";
             
-            // STOP THE RAIN
             clearInterval(rainInterval);
             
-            // CLEAR EXISTING PHOTOS
             const existingPhotos = document.querySelectorAll('.falling-photo');
             existingPhotos.forEach(photo => photo.remove());
 
-            // SHOW COLLAGE BACKGROUND
             collageBg.style.opacity = "1";
         }
 
@@ -410,10 +415,8 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
             document.getElementById("message-area").style.display = "none";
             document.getElementById("success").style.display = "block";
 
-            // HIDE COLLAGE BACKGROUND
             collageBg.style.opacity = "0";
 
-            // RESTART THE RAIN
             rainInterval = setInterval(dropPhoto, 600);
         }
     </script>
