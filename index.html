@@ -21,11 +21,11 @@
             position: relative; 
         }
 
-        /* --- BACKGROUND ELEMENTS (Hearts & Roses) --- */
+        /* --- BACKGROUND HEARTS/ROSES (Floating UP) --- */
         .floating-element {
             position: fixed;
             color: rgba(255, 255, 255, 0.8);
-            bottom: -50px;
+            bottom: -50px; /* Starts at bottom */
             animation: floatUp linear infinite;
             z-index: 0; 
             pointer-events: none; 
@@ -74,15 +74,16 @@
         .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
         .p4 { bottom: 15%; right: 15%; transform: rotate(-8deg); }
 
-        /* --- FALLING PHOTOS (Appear after Yes) --- */
+        /* --- FALLING PHOTOS (Dropping DOWN) --- */
         .falling-photo {
             position: fixed;
-            top: -300px;
-            z-index: 20; 
+            top: -250px; /* Starts ABOVE the screen */
+            z-index: 20; /* Behind the card, but in front of background */
             background: white;
             padding: 10px 10px 25px 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            animation: fallDown 6s linear forwards; 
+            /* Slower animation (10s) to prevent overlap */
+            animation: fallDown 10s linear forwards; 
             pointer-events: none;
         }
 
@@ -92,8 +93,8 @@
         }
 
         @keyframes fallDown {
-            0% { transform: translateY(-300px) rotate(0deg); }
-            100% { transform: translateY(120vh) rotate(360deg); }
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(120vh) rotate(360deg); } /* Moves to bottom */
         }
 
         /* --- MAIN CARD --- */
@@ -105,7 +106,7 @@
             text-align: center;
             max-width: 400px;
             width: 90%;
-            z-index: 50; 
+            z-index: 50; /* Topmost layer */
             position: relative;
             transition: all 0.5s ease;
             max-height: 80vh; 
@@ -115,7 +116,7 @@
         }
 
         h1 {
-            font-family: 'Pacifico', cursive; /* Fancy Font */
+            font-family: 'Pacifico', cursive; 
             color: #d63384;
             font-size: 3rem; 
             margin: 0 0 30px 0; 
@@ -123,9 +124,8 @@
             font-weight: normal;
         }
 
-        /* Body text font */
         p, button {
-            font-family: 'Quicksand', sans-serif; /* Clean Font */
+            font-family: 'Quicksand', sans-serif;
         }
 
         .gif-container img {
@@ -136,7 +136,6 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        /* Buttons */
         button {
             font-weight: 700;
             font-size: 1.2rem;
@@ -178,12 +177,10 @@
             font-size: 1.1rem;
         }
 
-        /* --- HIDDEN SECTIONS --- */
         #success, #message-area {
             display: none;
         }
 
-        /* Message Area Styles */
         #message-area p {
             font-family: 'Quicksand', sans-serif;
             font-size: 1.2rem;
@@ -206,16 +203,15 @@
 
     <audio id="bgMusic" loop>
         <source src="song.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
 
     <div id="hearts-container"></div>
 
     <div id="static-photos" class="photo-wrapper">
-        <div class="polaroid p1"><img src="1.jpg" alt="1"></div>
-        <div class="polaroid p2"><img src="2.jpg" alt="2"></div>
-        <div class="polaroid p3"><img src="3.jpg" alt="3"></div>
-        <div class="polaroid p4"><img src="4.jpg" alt="4"></div>
+        <div class="polaroid p1"><img src="1.jpg" onerror="this.src='1.jpeg'" alt="1"></div>
+        <div class="polaroid p2"><img src="2.jpg" onerror="this.src='2.jpeg'" alt="2"></div>
+        <div class="polaroid p3"><img src="3.jpg" onerror="this.src='3.jpeg'" alt="3"></div>
+        <div class="polaroid p4"><img src="4.jpg" onerror="this.src='4.jpeg'" alt="4"></div>
     </div>
 
     <div class="card">
@@ -258,22 +254,18 @@ Me ❤️</p>
         const audio = document.getElementById("bgMusic");
         const staticPhotos = document.getElementById("static-photos");
 
-        /* YOUR 22 PHOTOS 
-           Make sure your files are named 1.jpg, 2.jpg ... up to 22.jpg
-           and are in the same folder as this file.
+        /* If you have 23 images, just list them here.
+           Don't worry about .jpg vs .jpeg, the code below handles it automatically!
         */
-        const myPhotos = [
-            "1.jpg", "2.jpg", "3.jpg", "4.jpg", "5.jpg", 
-            "6.jpg", "7.jpg", "8.jpg", "9.jpg", "10.jpg",
-            "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg",
-            "16.jpg", "17.jpg", "18.jpg", "19.jpg", "20.jpg",
-            "21.jpg", "22.jpg"
-        ];
+        const myPhotos = [];
+        for (let i = 1; i <= 23; i++) {
+            myPhotos.push(i + ".jpg");
+        }
         
         const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Last chance!"];
         let phraseIndex = 0;
 
-        // --- Background Floating Elements (Hearts & Roses) ---
+        // Background Hearts/Roses
         function createFloatingElement() {
             const el = document.createElement("div");
             el.classList.add("floating-element");
@@ -287,15 +279,26 @@ Me ❤️</p>
         }
         setInterval(createFloatingElement, 300);
 
-        // --- Falling Photos with Random Sizes ---
+        // Falling Photos Logic
         function dropPhoto() {
             const photoDiv = document.createElement("div");
             photoDiv.classList.add("falling-photo");
             
-            const randomImg = myPhotos[Math.floor(Math.random() * myPhotos.length)];
+            const randomImgName = myPhotos[Math.floor(Math.random() * myPhotos.length)];
             
-            photoDiv.innerHTML = `<img src="${randomImg}" alt="Memory">`;
+            // Create image with ERROR HANDLING for .jpeg
+            const img = document.createElement("img");
+            img.src = randomImgName;
+            img.alt = "Memory";
+            // This line fixes the Invisible Image issue:
+            img.onerror = function() { this.src = this.src.replace(".jpg", ".jpeg"); };
+            
+            photoDiv.appendChild(img);
+            
+            // Random Position
             photoDiv.style.left = Math.random() * 90 + "vw"; 
+            
+            // Random Rotation
             photoDiv.style.transform = `rotate(${Math.random() * 360}deg)`;
             
             // Random Size: 100px to 220px
@@ -303,7 +306,9 @@ Me ❤️</p>
             photoDiv.style.width = randomWidth + "px";
 
             document.body.appendChild(photoDiv);
-            setTimeout(() => { photoDiv.remove(); }, 6000); 
+            
+            // Cleanup after 10 seconds (matched with CSS animation)
+            setTimeout(() => { photoDiv.remove(); }, 10000); 
         }
 
         function moveButton() {
@@ -319,7 +324,9 @@ Me ❤️</p>
             document.getElementById("success").style.display = "block";
             staticPhotos.style.opacity = "0"; 
             audio.play().catch(e => console.log("Audio interaction needed"));
-            setInterval(dropPhoto, 600); // Speed: 600ms per photo
+            
+            // INCREASED INTERVAL TO 2000ms (2 seconds) to prevent overlap
+            setInterval(dropPhoto, 2000); 
         }
 
         function showLetter() {
