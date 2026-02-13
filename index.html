@@ -72,15 +72,15 @@
         .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
         .p4 { bottom: 15%; right: 15%; transform: rotate(-8deg); }
 
-        /* --- FALLING PHOTOS FIX --- */
+        /* --- FALLING PHOTOS --- */
         .falling-photo {
             position: fixed;
-            z-index: 20; /* Behind the card */
+            z-index: 20; 
             background: white;
             padding: 10px 10px 25px 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            /* We use 'top' for animation so we can use 'transform' for static rotation */
-            animation: fallDown 10s linear forwards; 
+            /* FASTER ANIMATION: Changed from 10s to 7s */
+            animation: fallDown 7s linear forwards; 
             pointer-events: none;
         }
 
@@ -89,7 +89,7 @@
             display: block;
         }
 
-        /* Keyframes: Move from Top to Bottom WITHOUT spinning */
+        /* Move from Top to Bottom */
         @keyframes fallDown {
             0% { top: -300px; }
             100% { top: 120vh; }
@@ -274,7 +274,7 @@ Me ❤️</p>
         }
         setInterval(createFloatingElement, 300);
 
-        // --- FIXED FALLING PHOTOS LOGIC ---
+        // --- FIXED FALLING PHOTOS LOGIC (LEFT/RIGHT ONLY) ---
         function dropPhoto() {
             const photoDiv = document.createElement("div");
             photoDiv.classList.add("falling-photo");
@@ -284,16 +284,23 @@ Me ❤️</p>
             const img = document.createElement("img");
             img.src = randomImgName;
             img.alt = "Memory";
-            // Fix for .jpeg
             img.onerror = function() { this.src = this.src.replace(".jpg", ".jpeg"); };
             
             photoDiv.appendChild(img);
             
-            // Random Horizontal Position
-            photoDiv.style.left = Math.random() * 90 + "vw"; 
+            // --- NEW POSITIONING LOGIC ---
+            // We want photos ONLY on left (0-30%) or right (70-95%)
+            let randomLeft;
+            if (Math.random() < 0.5) {
+                // Go to Left Side
+                randomLeft = Math.random() * 25; // 0% to 25%
+            } else {
+                // Go to Right Side
+                randomLeft = Math.random() * 20 + 70; // 70% to 90%
+            }
+            photoDiv.style.left = randomLeft + "vw";
             
-            // --- FIX: LIMIT ROTATION ---
-            // Random number between -20 and +20 degrees only
+            // Small random rotation (-20 to +20 deg)
             const randomTilt = Math.random() * 40 - 20; 
             photoDiv.style.transform = `rotate(${randomTilt}deg)`;
             
@@ -303,7 +310,8 @@ Me ❤️</p>
 
             document.body.appendChild(photoDiv);
             
-            setTimeout(() => { photoDiv.remove(); }, 10000); 
+            // Cleanup matches animation duration
+            setTimeout(() => { photoDiv.remove(); }, 7000); 
         }
 
         function moveButton() {
@@ -320,8 +328,8 @@ Me ❤️</p>
             staticPhotos.style.opacity = "0"; 
             audio.play().catch(e => console.log("Audio interaction needed"));
             
-            // Interval set to 2.5 seconds to prevent overlapping
-            setInterval(dropPhoto, 2500); 
+            // FASTER FREQUENCY: Photo every 0.8 seconds (800ms)
+            setInterval(dropPhoto, 800); 
         }
 
         function showLetter() {
