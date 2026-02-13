@@ -11,7 +11,6 @@
 
     <style>
         body {
-            /* Softer, more romantic pink gradient */
             background: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%);
             display: flex;
             justify-content: center;
@@ -19,7 +18,7 @@
             height: 100vh;
             margin: 0;
             overflow: hidden;
-            position: relative; /* Needed for absolute positioning of photos */
+            position: relative; 
         }
 
         /* --- FLOATING HEARTS CSS --- */
@@ -28,36 +27,30 @@
             color: rgba(255, 255, 255, 0.6);
             bottom: -50px;
             animation: floatUp linear infinite;
-            z-index: 0; /* Behind everything */
-            pointer-events: none; /* So you can click through them */
+            z-index: 0; 
+            pointer-events: none; 
         }
 
         @keyframes floatUp {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-110vh) rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- BACKGROUND PHOTOS CSS --- */
+        /* --- BACKGROUND STATIC PHOTOS CSS --- */
         .photo-wrapper {
             position: absolute;
             width: 100%;
             height: 100%;
             top: 0;
             left: 0;
-            z-index: 1; /* Above background, behind card */
-            pointer-events: none; /* User can't click them */
+            z-index: 1;
+            pointer-events: none;
         }
 
         .polaroid {
             position: absolute;
             background: white;
-            padding: 10px 10px 25px 10px; /* Polaroid style padding */
+            padding: 10px 10px 25px 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             transform: rotate(-5deg);
             width: 150px;
@@ -73,13 +66,12 @@
             border: 1px solid #eee;
         }
 
-        /* Specific positions for the photos */
+        /* Positions for static background photos */
         .p1 { top: 10%; left: 10%; transform: rotate(-10deg); }
         .p2 { top: 15%; right: 10%; transform: rotate(10deg); }
         .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
         .p4 { bottom: 15%; right: 15%; transform: rotate(-8deg); }
 
-        /* Hide photos on small mobile screens so it's not too crowded */
         @media (max-width: 600px) {
             .polaroid { width: 100px; padding: 5px 5px 15px 5px; opacity: 0.6; }
             .p1 { top: 5%; left: -10px; }
@@ -88,40 +80,55 @@
             .p4 { bottom: 5%; right: -10px; }
         }
 
+        /* --- DROPPING PHOTOS ANIMATION --- */
+        .falling-photo {
+            position: fixed;
+            top: -200px;
+            z-index: 5; /* Above background, behind card */
+            width: 150px;
+            background: white;
+            padding: 10px 10px 25px 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: fallDown 8s linear forwards;
+        }
+
+        .falling-photo img {
+            width: 100%;
+            display: block;
+        }
+
+        @keyframes fallDown {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(120vh) rotate(360deg); }
+        }
+
         /* --- MAIN CARD CSS --- */
         .card {
             background: rgba(255, 255, 255, 0.95);
-            padding: 40px;
+            padding: 50px 40px; 
             border-radius: 25px;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             text-align: center;
             max-width: 400px;
             width: 90%;
-            z-index: 10; /* Top layer! */
+            z-index: 10;
             position: relative;
         }
 
         h1 {
             font-family: 'Great Vibes', cursive; 
             color: #d63384;
-            font-size: 4rem; 
-            margin: 10px 0 20px 0;
+            font-size: 3.5rem; 
+            margin: 0 0 40px 0; 
             line-height: 1.2;
             font-weight: normal;
-        }
-
-        p {
-            font-family: 'Dancing Script', cursive;
-            font-size: 1.5rem;
-            color: #555;
-            margin-bottom: 30px;
         }
 
         .gif-container img {
             width: 100%;
             max-width: 250px;
             border-radius: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
@@ -143,7 +150,7 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 20; /* Ensure buttons are clickable */
+            z-index: 20;
         }
 
         #yesBtn {
@@ -171,6 +178,11 @@
 </head>
 <body>
 
+    <audio id="bgMusic" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
     <div id="hearts-container"></div>
 
     <div class="photo-wrapper">
@@ -190,12 +202,7 @@
 
     <div class="card">
         <div id="question">
-            <div class="gif-container">
-                <img id="mainGif" src="https://media1.tenor.com/m/K2sEqmF-WwQAAAAC/mochi-peach.gif" alt="Cute asking cat">
-            </div>
             <h1>Will you be my Valentine?</h1>
-            <p>I promise to get you chocolate! 🍫</p>
-            
             <div class="btn-group">
                 <button id="yesBtn" onclick="handleYes()">Yes! ❤️</button>
                 <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No 💔</button>
@@ -206,71 +213,73 @@
             <div class="gif-container">
                 <img src="https://media1.tenor.com/m/gUiu1zyxfzYAAAAC/bear-kiss-bear-kisses.gif" alt="Happy kissing cats">
             </div>
-            <h1>Yay! I love you! ❤️</h1>
-            <p>See you on the 14th! 🥰</p>
+            <h1>Love you Jaasthi Kandha!! ❤️</h1>
         </div>
     </div>
 
     <script>
         const noBtn = document.getElementById("noBtn");
         const yesBtn = document.getElementById("yesBtn");
-        const mainGif = document.getElementById("mainGif");
         const heartsContainer = document.getElementById("hearts-container");
-        
-        const gifs = {
-            ask: "https://media1.tenor.com/m/K2sEqmF-WwQAAAAC/mochi-peach.gif",
-            sad: "https://media1.tenor.com/m/bCjpZgO_gS0AAAAC/mochi-cat.gif"
-        };
+        const audio = document.getElementById("bgMusic");
 
+        // LIST OF PHOTOS TO DROP - REPLACE THESE WITH YOUR OWN!
+        const myPhotos = [
+            "https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=300",
+            "https://images.unsplash.com/photo-1583864697784-a0efc8379f70?q=80&w=300",
+            "https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300",
+            "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=300"
+        ];
+        
         const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Look at my face 🥺", "Last chance!"];
         let phraseIndex = 0;
 
-        // --- Logic for Floating Hearts ---
+        // --- Logic for Floating Hearts (Background) ---
         function createHeart() {
             const heart = document.createElement("div");
             heart.classList.add("heart");
             heart.innerHTML = "❤️";
-            
-            // Randomize position and animation
             heart.style.left = Math.random() * 100 + "vw";
-            heart.style.animationDuration = Math.random() * 3 + 4 + "s"; // 4-7 seconds
-            heart.style.fontSize = Math.random() * 20 + 20 + "px"; // 20-40px size
-            
+            heart.style.animationDuration = Math.random() * 3 + 4 + "s"; 
+            heart.style.fontSize = Math.random() * 20 + 20 + "px"; 
             heartsContainer.appendChild(heart);
-            
-            // Remove heart after animation to keep DOM clean
-            setTimeout(() => {
-                heart.remove();
-            }, 7000);
+            setTimeout(() => { heart.remove(); }, 7000);
         }
-
-        // Create a heart every 300ms
         setInterval(createHeart, 300);
 
+        // --- Logic for Dropping Photos ---
+        function dropPhoto() {
+            const photoDiv = document.createElement("div");
+            photoDiv.classList.add("falling-photo");
+
+            // Pick a random photo from the list
+            const randomImg = myPhotos[Math.floor(Math.random() * myPhotos.length)];
+            
+            photoDiv.innerHTML = `<img src="${randomImg}" alt="Memory">`;
+            
+            // Random horizontal position
+            photoDiv.style.left = Math.random() * 90 + "vw"; 
+            
+            // Random rotation start
+            photoDiv.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+            document.body.appendChild(photoDiv);
+
+            // Cleanup after animation finishes
+            setTimeout(() => {
+                photoDiv.remove();
+            }, 8000); 
+        }
 
         // --- Logic for No Button Movement ---
         function moveButton() {
-            mainGif.src = gifs.sad; // Change image to sad
-
-            // Need to set absolute position for the button to move freely relative to card/screen
             noBtn.style.position = "absolute"; 
-
-            // Get viewport dimensions to keep button on screen
             const maxX = window.innerWidth - noBtn.offsetWidth;
             const maxY = window.innerHeight - noBtn.offsetHeight;
-
-            const randomX = Math.random() * (window.innerWidth - 100); // Keep slightly within bounds
-            const randomY = Math.random() * (window.innerHeight - 100);
-
-            // Just move it randomly around screen, but keep z-index high
             noBtn.style.left = `${Math.random() * 80}%`;
             noBtn.style.top = `${Math.random() * 80}%`;
-
-            // Change Text
             phraseIndex = (phraseIndex + 1) % phrases.length;
             noBtn.innerText = phrases[phraseIndex];
-
-            // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = `${currentSize + 2}px`;
         }
@@ -279,7 +288,13 @@
             document.getElementById("question").style.display = "none";
             document.getElementById("success").style.display = "block";
             
-            // Optional: Burst of hearts when Yes is clicked
+            // 1. Play Music
+            audio.play().catch(error => console.log("Audio play failed (user interaction needed first):", error));
+
+            // 2. Start Dropping Photos every 3 seconds
+            setInterval(dropPhoto, 3000);
+
+            // 3. Burst of hearts
             for(let i=0; i<30; i++) {
                 setTimeout(createHeart, i * 50);
             }
