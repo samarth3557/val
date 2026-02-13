@@ -66,10 +66,9 @@
             border: 1px solid #eee;
         }
 
-        .p1 { top: 10%; left: 10%; transform: rotate(-10deg); }
+        /* We only have p2 (Top Right) and p3 (Bottom Left) now for balance */
         .p2 { top: 15%; right: 10%; transform: rotate(10deg); }
         .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
-        .p4 { bottom: 15%; right: 15%; transform: rotate(-8deg); }
 
         /* --- FALLING PHOTOS --- */
         .falling-photo {
@@ -77,14 +76,11 @@
             background: white;
             padding: 10px 10px 25px 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            
-            /* Hardware Acceleration */
             will-change: transform, top, opacity;
             transform: translateZ(0); 
             backface-visibility: hidden;
-
             animation: fallDown 6s linear forwards; 
-            pointer-events: none; /* Allows clicking through photos */
+            pointer-events: none; 
             opacity: 0; 
         }
 
@@ -121,12 +117,20 @@
             font-family: 'Pacifico', cursive; 
             color: #d63384;
             font-size: 3rem; 
-            margin: 0 0 30px 0; 
+            margin: 0 0 10px 0; /* Reduced margin to fit caption */
             line-height: 1.3;
             font-weight: normal;
         }
         
-        /* Mobile adjustment for text size */
+        /* The New Caption Style */
+        .caption-text {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
         @media (max-width: 600px) {
             h1 { font-size: 2.2rem; }
             .card { padding: 20px; }
@@ -216,15 +220,15 @@
     <div id="hearts-container"></div>
 
     <div id="static-photos" class="photo-wrapper">
-        <div class="polaroid p1"><img src="1.jpg" onerror="this.src='1.jpeg'" alt="1"></div>
         <div class="polaroid p2"><img src="2.jpg" onerror="this.src='2.jpeg'" alt="2"></div>
         <div class="polaroid p3"><img src="3.jpg" onerror="this.src='3.jpeg'" alt="3"></div>
-        <div class="polaroid p4"><img src="4.jpg" onerror="this.src='4.jpeg'" alt="4"></div>
     </div>
 
     <div class="card">
         <div id="question">
             <h1>Will you be my Valentine?</h1>
+            <p class="caption-text">You are my favorite person ❤️</p>
+            
             <div class="btn-group">
                 <button id="yesBtn" onclick="handleYes()">Yes! ❤️</button>
                 <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No 💔</button>
@@ -325,7 +329,6 @@ Me ❤️</p>
                 photoDiv.style.width = randomWidth + "px";
             }
             
-            // Rotation (-15 to +15 deg)
             const randomTilt = Math.random() * 30 - 15; 
             photoDiv.style.transform = `rotate(${randomTilt}deg)`;
 
