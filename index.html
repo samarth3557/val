@@ -4,40 +4,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For You ❤️</title>
-    <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Sacramento&display=swap" rel="stylesheet">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+
     <style>
         body {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
-            font-family: 'Indie Flower', cursive;
+            /* Softer, more romantic pink gradient */
+            background: linear-gradient(120deg, #fccb90 0%, #d57eeb 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             overflow: hidden;
+            position: relative; /* Needed for absolute positioning of photos */
         }
 
+        /* --- FLOATING HEARTS CSS --- */
+        .heart {
+            position: fixed;
+            color: rgba(255, 255, 255, 0.6);
+            bottom: -50px;
+            animation: floatUp linear infinite;
+            z-index: 0; /* Behind everything */
+            pointer-events: none; /* So you can click through them */
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- BACKGROUND PHOTOS CSS --- */
+        .photo-wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1; /* Above background, behind card */
+            pointer-events: none; /* User can't click them */
+        }
+
+        .polaroid {
+            position: absolute;
+            background: white;
+            padding: 10px 10px 25px 10px; /* Polaroid style padding */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: rotate(-5deg);
+            width: 150px;
+            height: auto;
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid #eee;
+        }
+
+        /* Specific positions for the photos */
+        .p1 { top: 10%; left: 10%; transform: rotate(-10deg); }
+        .p2 { top: 15%; right: 10%; transform: rotate(10deg); }
+        .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
+        .p4 { bottom: 15%; right: 15%; transform: rotate(-8deg); }
+
+        /* Hide photos on small mobile screens so it's not too crowded */
+        @media (max-width: 600px) {
+            .polaroid { width: 100px; padding: 5px 5px 15px 5px; opacity: 0.6; }
+            .p1 { top: 5%; left: -10px; }
+            .p2 { top: 5%; right: -10px; }
+            .p3 { bottom: 5%; left: -10px; }
+            .p4 { bottom: 5%; right: -10px; }
+        }
+
+        /* --- MAIN CARD CSS --- */
         .card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             text-align: center;
             max-width: 400px;
             width: 90%;
+            z-index: 10; /* Top layer! */
             position: relative;
         }
 
         h1 {
-            font-family: 'Sacramento', cursive;
+            font-family: 'Great Vibes', cursive; 
             color: #d63384;
-            font-size: 3.5rem;
-            margin: 10px 0;
+            font-size: 4rem; 
+            margin: 10px 0 20px 0;
+            line-height: 1.2;
+            font-weight: normal;
         }
 
         p {
-            font-size: 1.2rem;
-            color: #666;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            color: #555;
             margin-bottom: 30px;
         }
 
@@ -45,63 +121,72 @@
             width: 100%;
             max-width: 250px;
             border-radius: 15px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
         .btn-group {
             position: relative;
-            height: 60px; /* Space for buttons to move */
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
         }
 
         button {
-            font-family: 'Indie Flower', cursive;
-            font-size: 1.2rem;
-            padding: 10px 30px;
+            font-family: 'Dancing Script', cursive;
+            font-weight: 700;
+            font-size: 1.3rem;
+            padding: 12px 35px;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            transition: transform 0.2s ease;
-            position: relative;
-            z-index: 10;
+            transition: all 0.3s ease;
+            z-index: 20; /* Ensure buttons are clickable */
         }
 
         #yesBtn {
             background-color: #ff4d6d;
             color: white;
-            box-shadow: 0 4px 10px rgba(255, 77, 109, 0.3);
-            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+        }
+        
+        #yesBtn:hover {
+            transform: scale(1.05);
+            background-color: #ff2a55;
         }
 
         #noBtn {
-            background-color: #fff;
+            background-color: transparent;
             color: #ff4d6d;
             border: 2px solid #ff4d6d;
+            position: relative; 
         }
 
-        /* Success Message styling */
         #success {
             display: none;
-        }
-        
-        /* Floating hearts background animation */
-        .heart {
-            position: absolute;
-            color: #fff;
-            opacity: 0.5;
-            animation: float 6s linear infinite;
-            z-index: -1;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
     <div id="hearts-container"></div>
+
+    <div class="photo-wrapper">
+        <div class="polaroid p1">
+            <img src="https://images.unsplash.com/photo-1518568814500-bf0f8d125f46?q=80&w=300&auto=format&fit=crop" alt="Memory 1">
+        </div>
+        <div class="polaroid p2">
+            <img src="https://images.unsplash.com/photo-1583864697784-a0efc8379f70?q=80&w=300&auto=format&fit=crop" alt="Memory 2">
+        </div>
+        <div class="polaroid p3">
+            <img src="https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?q=80&w=300&auto=format&fit=crop" alt="Memory 3">
+        </div>
+        <div class="polaroid p4">
+            <img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?q=80&w=300&auto=format&fit=crop" alt="Memory 4">
+        </div>
+    </div>
 
     <div class="card">
         <div id="question">
@@ -130,42 +215,62 @@
         const noBtn = document.getElementById("noBtn");
         const yesBtn = document.getElementById("yesBtn");
         const mainGif = document.getElementById("mainGif");
+        const heartsContainer = document.getElementById("hearts-container");
         
-        // List of GIFs for reactions
         const gifs = {
             ask: "https://media1.tenor.com/m/K2sEqmF-WwQAAAAC/mochi-peach.gif",
-            sad: "https://media1.tenor.com/m/bCjpZgO_gS0AAAAC/mochi-cat.gif" // Crying cat
+            sad: "https://media1.tenor.com/m/bCjpZgO_gS0AAAAC/mochi-cat.gif"
         };
 
-        const phrases = [
-            "No 💔", "Please?", "I'll be sad...", "Don't do this!", 
-            "Look at my face 🥺", "Last chance!", "I'm gonna cry..."
-        ];
-        
+        const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Look at my face 🥺", "Last chance!"];
         let phraseIndex = 0;
 
-        function moveButton() {
-            // Change GIF to sad because she is trying to click No
-            mainGif.src = gifs.sad;
+        // --- Logic for Floating Hearts ---
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.innerHTML = "❤️";
+            
+            // Randomize position and animation
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = Math.random() * 3 + 4 + "s"; // 4-7 seconds
+            heart.style.fontSize = Math.random() * 20 + 20 + "px"; // 20-40px size
+            
+            heartsContainer.appendChild(heart);
+            
+            // Remove heart after animation to keep DOM clean
+            setTimeout(() => {
+                heart.remove();
+            }, 7000);
+        }
 
-            // Make the jump range smaller (fixed jump distance logic)
-            const jumpRange = 100; // Restricted area
-            const randomX = (Math.random() - 0.5) * 2 * jumpRange;
-            const randomY = (Math.random() - 0.5) * 2 * jumpRange;
-            
-            // Get current positions
-            const currentX = parseFloat(noBtn.style.left) || 0;
-            const currentY = parseFloat(noBtn.style.top) || 0;
-            
-            noBtn.style.position = "absolute"; // Ensure it can move
-            noBtn.style.left = `${currentX + randomX}px`;
-            noBtn.style.top = `${currentY + randomY}px`;
+        // Create a heart every 300ms
+        setInterval(createHeart, 300);
+
+
+        // --- Logic for No Button Movement ---
+        function moveButton() {
+            mainGif.src = gifs.sad; // Change image to sad
+
+            // Need to set absolute position for the button to move freely relative to card/screen
+            noBtn.style.position = "absolute"; 
+
+            // Get viewport dimensions to keep button on screen
+            const maxX = window.innerWidth - noBtn.offsetWidth;
+            const maxY = window.innerHeight - noBtn.offsetHeight;
+
+            const randomX = Math.random() * (window.innerWidth - 100); // Keep slightly within bounds
+            const randomY = Math.random() * (window.innerHeight - 100);
+
+            // Just move it randomly around screen, but keep z-index high
+            noBtn.style.left = `${Math.random() * 80}%`;
+            noBtn.style.top = `${Math.random() * 80}%`;
 
             // Change Text
             phraseIndex = (phraseIndex + 1) % phrases.length;
             noBtn.innerText = phrases[phraseIndex];
 
-            // Make Yes button Grow
+            // Grow Yes Button
             const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
             yesBtn.style.fontSize = `${currentSize + 2}px`;
         }
@@ -173,23 +278,12 @@
         function handleYes() {
             document.getElementById("question").style.display = "none";
             document.getElementById("success").style.display = "block";
-            createConfetti();
-        }
-
-        // Background Hearts Logic
-        function createHearts() {
-            const container = document.getElementById('hearts-container');
-            for(let i = 0; i < 15; i++) {
-                const heart = document.createElement('div');
-                heart.innerHTML = '❤';
-                heart.className = 'heart';
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.animationDuration = Math.random() * 3 + 4 + 's'; // 4-7s
-                heart.style.fontSize = Math.random() * 20 + 20 + 'px';
-                container.appendChild(heart);
+            
+            // Optional: Burst of hearts when Yes is clicked
+            for(let i=0; i<30; i++) {
+                setTimeout(createHeart, i * 50);
             }
         }
-        createHearts();
     </script>
 </body>
 </html>
