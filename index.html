@@ -19,9 +19,33 @@
             margin: 0;
             overflow: hidden;
             position: relative; 
+            transition: background 0.5s ease; /* Smooth transition for background */
         }
 
-        /* --- BACKGROUND HEARTS/ROSES --- */
+        /* --- COLLAGE BACKGROUND (Hidden by default) --- */
+        #collage-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5; /* Behind the card (50) but above everything else */
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+        }
+
+        /* Use Desktop Image by default */
+        #collage-bg { background-image: url('desktop-bg.jpg'); }
+
+        /* Use Mobile Image on small screens */
+        @media (max-width: 600px) {
+            #collage-bg { background-image: url('mobile-bg.jpg'); }
+        }
+
+        /* --- FLOATING HEARTS/ROSES --- */
         .floating-element {
             position: fixed;
             color: rgba(255, 255, 255, 0.8);
@@ -37,7 +61,7 @@
             100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        /* --- STATIC BACKGROUND PHOTOS --- */
+        /* --- STATIC POLAROIDS (Initial Screen) --- */
         .photo-wrapper {
             position: absolute;
             width: 100%;
@@ -66,7 +90,6 @@
             border: 1px solid #eee;
         }
 
-        /* We only have p2 (Top Right) and p3 (Bottom Left) now for balance */
         .p2 { top: 15%; right: 10%; transform: rotate(10deg); }
         .p3 { bottom: 10%; left: 15%; transform: rotate(5deg); }
 
@@ -79,7 +102,8 @@
             will-change: transform, top, opacity;
             transform: translateZ(0); 
             backface-visibility: hidden;
-            animation: fallDown 6s linear forwards; 
+            /* SLOWED DOWN ANIMATION: 8s */
+            animation: fallDown 8s linear forwards; 
             pointer-events: none; 
             opacity: 0; 
         }
@@ -133,6 +157,8 @@
         @media (max-width: 600px) {
             h1 { font-size: 2.2rem; }
             .card { padding: 20px; }
+            /* Hide static polaroids on small mobile screens to prevent clutter */
+            .polaroid { opacity: 0.5; width: 100px; }
         }
 
         p, button {
@@ -194,13 +220,13 @@
 
         #message-area p {
             font-family: 'Quicksand', sans-serif;
-            font-size: 1rem; /* Slightly smaller to fit the long text nicely */
+            font-size: 1rem; 
             color: #444;
             line-height: 1.6;
             margin-bottom: 20px;
-            white-space: pre-wrap; /* THIS PRESERVES YOUR LINE BREAKS */
+            white-space: pre-wrap; 
             text-align: left;
-            max-height: 400px; /* Increased height for long letter */
+            max-height: 400px; 
             overflow-y: auto; 
             padding-right: 10px;
         }
@@ -215,6 +241,8 @@
     <audio id="bgMusic" loop>
         <source src="song.mp3" type="audio/mpeg">
     </audio>
+
+    <div id="collage-bg"></div>
 
     <div id="hearts-container"></div>
 
@@ -238,7 +266,7 @@
             <div class="gif-container">
                 <img src="https://media1.tenor.com/m/gUiu1zyxfzYAAAAC/bear-kiss-bear-kisses.gif" alt="Kisses">
             </div>
-            <h1>Love you jaasthi Kandha!! ❤️</h1>
+            <h1>Love you Jaasthi Kandha!! ❤️</h1>
             <button id="readMoreBtn" onclick="showLetter()">Read My Message 💌</button>
         </div>
 
@@ -279,6 +307,7 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
         const heartsContainer = document.getElementById("hearts-container");
         const audio = document.getElementById("bgMusic");
         const staticPhotos = document.getElementById("static-photos");
+        const collageBg = document.getElementById("collage-bg");
 
         /* Photo List: 1.jpg to 23.jpg */
         const myPhotos = [];
@@ -288,6 +317,7 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
         
         const phrases = ["No 💔", "Please?", "I'll be sad...", "Don't do this!", "Last chance!"];
         let phraseIndex = 0;
+        let rainInterval; // Variable to control the rain
 
         function createFloatingElement() {
             const el = document.createElement("div");
@@ -321,7 +351,7 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
                 const randomWidth = Math.floor(Math.random() * 50) + 60; 
                 photoDiv.style.width = randomWidth + "px";
             } else {
-                // DESKTOP MODE (Left/Right)
+                // DESKTOP MODE
                 let randomLeft;
                 if (Math.random() < 0.5) {
                     randomLeft = Math.random() * 20; 
@@ -339,7 +369,8 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
             photoDiv.style.transform = `rotate(${randomTilt}deg)`;
 
             document.body.appendChild(photoDiv);
-            setTimeout(() => { photoDiv.remove(); }, 6000); 
+            // Longer cleanup to match slower animation
+            setTimeout(() => { photoDiv.remove(); }, 8000); 
         }
 
         function moveButton() {
@@ -356,17 +387,34 @@ Love you jaasthi Kandha, Take care!!! 😚</p>
             staticPhotos.style.opacity = "0"; 
             audio.play().catch(e => console.log("Audio interaction needed"));
             
-            setInterval(dropPhoto, 600); 
+            // Start the rain (0.6s frequency)
+            rainInterval = setInterval(dropPhoto, 600); 
         }
 
         function showLetter() {
             document.getElementById("success").style.display = "none";
             document.getElementById("message-area").style.display = "block";
+            
+            // STOP THE RAIN
+            clearInterval(rainInterval);
+            
+            // CLEAR EXISTING PHOTOS
+            const existingPhotos = document.querySelectorAll('.falling-photo');
+            existingPhotos.forEach(photo => photo.remove());
+
+            // SHOW COLLAGE BACKGROUND
+            collageBg.style.opacity = "1";
         }
 
         function closeLetter() {
             document.getElementById("message-area").style.display = "none";
             document.getElementById("success").style.display = "block";
+
+            // HIDE COLLAGE BACKGROUND
+            collageBg.style.opacity = "0";
+
+            // RESTART THE RAIN
+            rainInterval = setInterval(dropPhoto, 600);
         }
     </script>
 </body>
